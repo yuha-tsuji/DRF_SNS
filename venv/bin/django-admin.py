@@ -1,0 +1,5 @@
+#!/Users/k17089kk/dev/udemy_react_drf/DRF_SNS/venv/bin/python
+from django.core import management
+
+if __name__ == "__main__":
+    management.execute_from_command_line()

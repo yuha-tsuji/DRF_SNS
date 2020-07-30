@@ -5,6 +5,10 @@ from django.conf import settings
 
 # Create your models here.
 
+def upload_path(nickname, filename):
+    ext = filename.split('.'[-1])
+    return '/'.join(['image', str(instance.user.id)+srt(instance.nickname)+str(".")+ str(ext)])
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -23,3 +27,45 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
 
         return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(max_length=50, unique=True)
+    name = models.CharField(max_length=30)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        return self.name
+
+class Profile(models.Model):
+    nickname = models.CharField(max_length=30)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, related_name='user',
+        on_delete=models.CASCADE
+    )
+    created_on = models.DateTimeField(auto_now_add=True)
+    friend = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='friend',
+    )
+    img = models.ImageField(blank=True, null=True, upload_to=upload_path)
+
+    def __str__(self):
+        return self.nickname
+
+class Message(models.Model):
+    message = models.CharField(max_length=200)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='sender',
+        on_delete=models.CASCADE
+    )
+    reciever = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='reciever',
+        on_delete=models.CASCADE
+    )
+
+    def __str__(self):
+        return self.message

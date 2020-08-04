@@ -69,3 +69,23 @@ class Message(models.Model):
 
     def __str__(self):
         return self.message
+
+
+class Tweet(models.Model):
+    text = models.CharField(max_length=140)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='owner',
+        on_delete=models.CASCADE
+    )
+
+    def Tweet_by(self):
+        try:
+            temp = Profile.objects.get(userpro=self.owner)
+        except Profile.DoesNotExist:
+            temp = None
+            return
+        
+        return temp.nickname
+
+    def __str__(self):
+        return self.text

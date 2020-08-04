@@ -43,7 +43,9 @@ INSTALLED_APPS = [
 
     'core',
     'api_user',
-    'api_dm'
+    'api_dm',
+    'api_tweet'
+
 ]
 
 MIDDLEWARE = [
